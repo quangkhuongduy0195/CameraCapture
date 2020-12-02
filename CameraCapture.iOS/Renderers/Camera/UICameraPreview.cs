@@ -28,6 +28,7 @@ namespace CameraCapture.iOS.Renderers.Camera
         public override void Draw(CGRect rect)
         {
             base.Draw(rect);
+            if(_cameraLayer != null)
             _cameraLayer.Frame = rect;
         }
 
