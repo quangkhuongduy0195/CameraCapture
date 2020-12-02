@@ -1,24 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             BackgroundColor="White"
+             xmlns:renderers="clr-namespace:CameraCapture.Renderers.Camera"
              x:Class="CameraCapture.MainPage">
 
-    <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-        </Frame>
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
-        <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
-        <Label FontSize="16" Padding="30,24,30,0">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Learn more at "/>
-                        <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-    </StackLayout>
+    <Grid HorizontalOptions="FillAndExpand"
+          VerticalOptions="FillAndExpand">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="96"/>
+        </Grid.RowDefinitions>
+        <renderers:CameraView Grid.Row="0"
+                              x:Name="cameraView"
+                              FinishProcessingPhoto="cameraView_DidFinishProcessingPhoto" />
+        <Grid Grid.Row="1"
+              BackgroundColor="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="64"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Margin="0, 16, 0, 16"
+                    Grid.Column="1"
+                    BackgroundColor="Red"
+                    HorizontalOptions="Fill"
+                    BorderColor="White"
+                    BorderWidth="5"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    CornerRadius="32"
+                    Clicked="Button_Clicked"/>
+        </Grid>
+        <Grid Grid.Row="0"
+              BackgroundColor="White"
+              Grid.RowSpan="2"
+              IsVisible="false"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="FillAndExpand"
+              x:Name="gridPreview">
+            <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="96"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="imgPreview"
+                   VerticalOptions="FillAndExpand"
+                   HorizontalOptions="FillAndExpand"
+                   Aspect="AspectFill"/>
+            <Button Text="Hide preview"
+                    Grid.Row="1"
+                    TextColor="Red"
+                    FontSize="Header"
+                    x:Name="btnhidePreview"
+                    Clicked="btnhidePreview_Clicked"/>
+        </Grid>
+    </Grid>
 
 </ContentPage>

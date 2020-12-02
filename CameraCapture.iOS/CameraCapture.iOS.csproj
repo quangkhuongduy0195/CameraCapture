@@ -68,6 +68,9 @@
     <None Include="Entitlements.plist" />
     <None Include="Info.plist" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderers\Camera\CameraViewRendereriOS.cs" />
+    <Compile Include="Renderers\Camera\UICameraPreview.cs" />
+    <Compile Include="Renderers\Camera\IUICameraPreviewDelege.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -132,5 +135,9 @@
       <Project>{7A2D764F-6BC0-478D-8956-E3A0BA2EEA2D}</Project>
       <Name>CameraCapture</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Renderers\" />
+    <Folder Include="Renderers\Camera\" />
   </ItemGroup>
 </Project>
