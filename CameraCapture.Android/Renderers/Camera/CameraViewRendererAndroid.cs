@@ -69,7 +69,7 @@ namespace CameraCapture.Droid.Renderers.Camera
         private void CaptureAction()
         {
             //cameraPreview.SaveImageFromByte();
-
+            //cameraPreview.mCameraDevice
             Element.HandleDidFinishProcessingPhoto(null);
             //DependencyService.Get<CameraPreview>().SaveImageFromByte(null, null);
 
