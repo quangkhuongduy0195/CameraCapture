@@ -58,24 +58,24 @@ namespace CameraCapture.Droid.Renderers.Camera
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
-            if (e.PropertyName == CameraView.CameraOptionProperty.PropertyName)
-                cameraPreview?.ChangeCameraOption(Element.CameraOption);
+            //if (e.PropertyName == CameraView.CameraOptionProperty.PropertyName)
+                //cameraPreview?.ChangeCameraOption(Element.CameraOption);
         }
 
         void OnCameraPreviewClicked(object sender, EventArgs e)
         {
-            if (cameraPreview.IsPreviewing)
-            {
+            //if (cameraPreview.IsPreviewing)
+            //{
                 //cameraPreview.Preview.StopPreview();
                 //cameraPreview.StopCamera();
                 //cameraPreview.IsPreviewing = false;
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 //cameraPreview.Preview.StartPreview();
                 //cameraPreview.StartCamera();
                 //cameraPreview.IsPreviewing = true;
-            }
+            //}
         }
 
         protected override void Dispose(bool disposing)

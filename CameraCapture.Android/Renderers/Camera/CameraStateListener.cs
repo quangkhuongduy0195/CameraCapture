@@ -16,18 +16,20 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             public override void OnDisconnected(CameraDevice camera)
             {
-
+                cameraPreview._cameraDevice.Close();
             }
 
             public override void OnError(CameraDevice camera, [GeneratedEnum] Android.Hardware.Camera2.CameraError error)
             {
-
+                cameraPreview._cameraDevice.Close();
+                cameraPreview._cameraDevice = null;
             }
 
             public override void OnOpened(CameraDevice camera)
             {
-                cameraPreview.mCameraDevice = camera;
-                cameraPreview.mHandler.SendEmptyMessage(1);
+                cameraPreview._cameraDevice = camera;
+                cameraPreview.createCameraPreview();
+                //cameraPreview.mHandler.SendEmptyMessage(1);
             }
         }
     }

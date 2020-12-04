@@ -67,6 +67,7 @@
     <Compile Include="Renderers\Camera\CameraPreview.cs" />
     <Compile Include="Renderers\Camera\CameraStateListener.cs" />
     <Compile Include="Renderers\Camera\CaptureSessionListener.cs" />
+    <Compile Include="Renderers\Camera\AutoFitTextureView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
