@@ -1,8 +1,19 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
+using System.Threading.Tasks;
+using Android.App;
 using Android.Content;
+using Android.Content.PM;
+using Android.Graphics;
+using Android.Hardware.Camera2;
+using Android.Media;
+using Android.Provider;
+using Android.Util;
 using CameraCapture.Droid.Renderers.Camera;
 using CameraCapture.Renderers.Camera;
+using Plugin.Media;
+using Plugin.Media.Abstractions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
@@ -42,12 +53,12 @@ namespace CameraCapture.Droid.Renderers.Camera
                     if (e.OldElement != null)
                     {
                         // Unsubscribe
-                        cameraPreview.Click -= OnCameraPreviewClicked;
+                        Element._captureAction = null;
                     }
                     if (e.NewElement != null)
                     {
                         // Subscribe
-                        cameraPreview.Click += OnCameraPreviewClicked;
+                        Element._captureAction = CaptureAction;
                     }
                     break;
                 case PermissionStatus.Restricted:
@@ -55,6 +66,16 @@ namespace CameraCapture.Droid.Renderers.Camera
             }
         }
 
+        private void CaptureAction()
+        {
+            //cameraPreview.SaveImageFromByte();
+
+            Element.HandleDidFinishProcessingPhoto(null);
+            //DependencyService.Get<CameraPreview>().SaveImageFromByte(null, null);
+
+        }
+
+       
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
@@ -62,21 +83,21 @@ namespace CameraCapture.Droid.Renderers.Camera
                 cameraPreview?.ChangeCameraOption(Element.CameraOption);
         }
 
-        void OnCameraPreviewClicked(object sender, EventArgs e)
-        {
-            if (cameraPreview.IsPreviewing)
-            {
-                //cameraPreview.Preview.StopPreview();
-                //cameraPreview.StopCamera();
-                //cameraPreview.IsPreviewing = false;
-            }
-            else
-            {
-                //cameraPreview.Preview.StartPreview();
-                //cameraPreview.StartCamera();
-                //cameraPreview.IsPreviewing = true;
-            }
-        }
+        //void OnCameraPreviewClicked(object sender, EventArgs e)
+        //{
+        //    if (cameraPreview.IsPreviewing)
+        //    {
+        //        //cameraPreview.Preview.StopPreview();
+        //        //cameraPreview.StopCamera();
+        //        //cameraPreview.IsPreviewing = false;
+        //    }
+        //    else
+        //    {
+        //        //cameraPreview.Preview.StartPreview();
+        //        //cameraPreview.StartCamera();
+        //        //cameraPreview.IsPreviewing = true;
+        //    }
+        //}
 
         protected override void Dispose(bool disposing)
         {
