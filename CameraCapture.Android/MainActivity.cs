@@ -40,11 +40,13 @@ namespace CameraCapture.Droid
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
 
-        public bool FirstTime;
+        public bool FirstTime = false;
         async System.Threading.Tasks.Task CreateOrGetStorageAsync ()
         {
             var firstTime = await SecureStorage.GetAsync("firsttime");
-            FirstTime = bool.Parse(firstTime);
+            if (firstTime != null)
+                FirstTime = bool.Parse(firstTime);
+
             if (FirstTime == false)
             {
                 await SecureStorage.SetAsync("firsttime", "true");
