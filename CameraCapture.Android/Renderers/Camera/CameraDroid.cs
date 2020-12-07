@@ -43,7 +43,9 @@ namespace CameraCapture.Droid.Renderers.Camera
         // The current state of camera state for taking pictures.
         public int mState = STATE_PREVIEW;
 
-        private static readonly SparseIntArray Orientations = new SparseIntArray();
+        private int sensorOrientation;
+
+        private static readonly SparseIntArray _orientations = new SparseIntArray();
 
         public event EventHandler<byte[]> Photo;
 
@@ -99,6 +101,11 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             _cameraCaptureListener = new CameraCaptureListener(this);
 
+            _orientations.Append((int)SurfaceOrientation.Rotation0, 90);
+            _orientations.Append((int)SurfaceOrientation.Rotation90, 0);
+            _orientations.Append((int)SurfaceOrientation.Rotation180, 270);
+            _orientations.Append((int)SurfaceOrientation.Rotation270, 180);
+
             AddView(_cameraTexture);
         }
 
@@ -148,6 +155,7 @@ namespace CameraCapture.Droid.Renderers.Camera
             for (int i = 0; i < cameraIds.Length; i++)
             {
                 CameraCharacteristics chararc = _manager.GetCameraCharacteristics(cameraIds[i]);
+                sensorOrientation = (int)chararc.Get(CameraCharacteristics.SensorOrientation);
 
                 var facing = (Integer)chararc.Get(CameraCharacteristics.LensFacing);
                 if (facing != null && facing == (Integer.ValueOf((int)LensFacing.Back)))
@@ -191,6 +199,8 @@ namespace CameraCapture.Droid.Renderers.Camera
             _previewSize = GetOptimalSize(map.GetOutputSizes(Class.FromType(typeof(SurfaceTexture))), width, height);
         }
 
+        int GetOrientation(int rotation) => (_orientations.Get(rotation) + sensorOrientation + 270) % 360;
+
         private bool HasFLash(CameraCharacteristics characteristics)
         {
             var available = (Java.Lang.Boolean)characteristics.Get(CameraCharacteristics.FlashInfoAvailable);
@@ -224,6 +234,11 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             if (_captureBuilder == null)
                 _captureBuilder = CameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
+
+            var windowManager = _context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
+            int rotation = (int)windowManager.DefaultDisplay.Rotation;
+            int orientation = GetOrientation(rotation);
+            _captureBuilder.Set(CaptureRequest.JpegOrientation, orientation);
 
             _captureBuilder.AddTarget(_imageReader.Surface);
 
