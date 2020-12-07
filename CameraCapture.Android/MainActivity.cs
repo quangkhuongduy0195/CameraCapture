@@ -32,76 +32,68 @@ namespace CameraCapture.Droid
             _ = CreateOrGetStorageAsync();
             CheckPermission();
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-        public string FirstTime;
+
+        public bool FirstTime;
         async System.Threading.Tasks.Task CreateOrGetStorageAsync ()
         {
-            FirstTime = await SecureStorage.GetAsync("firsttime");
-            if (FirstTime == null)
+            var firstTime = await SecureStorage.GetAsync("firsttime");
+            FirstTime = bool.Parse(firstTime);
+            if (FirstTime == false)
             {
                 await SecureStorage.SetAsync("firsttime", "true");
                 return;
             }
         }
 
-        void CheckPermission()
+        public void ShowDialog (string message)
+        {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.SetTitle("Thông báo");
+            dialog.SetMessage(message);
+            dialog.SetPositiveButton("Huỷ", (s, a) =>
+            {
+                dialog.Dispose();
+            });
+            dialog.SetNegativeButton("Cài đặt", (s, a) =>
+            {
+                var context = Android.App.Application.Context;
+                Intent i = new Android.Content.Intent(Android.Provider.Settings.ActionApplicationDetailsSettings);
+                Android.Net.Uri uri = Android.Net.Uri.FromParts("package", this.PackageName, null);
+                i.SetData(uri);
+                context.StartActivity(i);
+            });
+            AlertDialog createDialogCamera = dialog.Create();
+            createDialogCamera.Show();
+        }
+
+        public void CheckPermission()
         {
             if (int.Parse(Build.VERSION.Sdk.ToString()) >= 23)
             {
                 var permCamera = ContextCompat.CheckSelfPermission(this, "android.permission.CAMERA");
                 var permStorage = ContextCompat.CheckSelfPermission(this, "android.permission.READ_EXTERNAL_STORAGE");
+                string messCamera = "Ứng dụng cần sử dụng máy ảnh. Vui lòng vào cài đặt để cấp quyền.";
+                string messStorage = "Ứng dụng cần sử dụng bộ nhớ. Vui lòng vào cài đặt để cấp quyền.";
                 if (permCamera != Android.Content.PM.Permission.Granted
                     || permStorage != Android.Content.PM.Permission.Granted)
                 {
                     ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.Camera, Manifest.Permission.ReadExternalStorage, Manifest.Permission.WriteExternalStorage}, 114);
                     
-                    if (ActivityCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.Camera) == false && permCamera != Android.Content.PM.Permission.Granted && FirstTime != null)
+                    if (ActivityCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.Camera) == false && permCamera != Android.Content.PM.Permission.Granted && FirstTime != false)
                     {
-                        AlertDialog.Builder dialogCamera = new AlertDialog.Builder(this);
-                        dialogCamera.SetTitle("Thông báo");
-                        dialogCamera.SetMessage("Ứng dụng cần sử dụng máy ảnh. Vui lòng vào cài đặt để cấp quyền.");
-                        dialogCamera.SetPositiveButton("Huỷ", (s, a) =>
-                        {
-                            dialogCamera.Dispose();
-                        });
-                        dialogCamera.SetNegativeButton("Cài đặt", (s, a) =>
-                        {
-                            var context = Android.App.Application.Context;
-                            Intent i = new Android.Content.Intent(Android.Provider.Settings.ActionApplicationDetailsSettings);
-                            Android.Net.Uri uri = Android.Net.Uri.FromParts("package", this.PackageName, null);
-                            i.SetData(uri);
-                            context.StartActivity(i);
-                        });
-                        AlertDialog createDialogCamera = dialogCamera.Create();
-                        createDialogCamera.Show();
-
+                        ShowDialog(messCamera);
                     }
 
-                    if (ActivityCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.ReadExternalStorage) == false && permStorage != Android.Content.PM.Permission.Granted && FirstTime != null)
+                    if (ActivityCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.ReadExternalStorage) == false && permStorage != Android.Content.PM.Permission.Granted && FirstTime != false)
                     {
-                        AlertDialog.Builder dialogStorage = new AlertDialog.Builder(this);
-                        dialogStorage.SetTitle("Thông báo");
-                        dialogStorage.SetMessage("Ứng dụng cần sử dụng bộ nhớ. Vui lòng vào cài đặt để cấp quyền.");
-                        dialogStorage.SetPositiveButton("Huỷ", (s, a) =>
-                        {
-                            dialogStorage.Dispose();
-                        });
-                        dialogStorage.SetNegativeButton("Cài đặt", (s, a) =>
-                        {
-                            var context = Android.App.Application.Context;
-                            Intent i = new Android.Content.Intent(Android.Provider.Settings.ActionApplicationDetailsSettings);
-                            Android.Net.Uri uri = Android.Net.Uri.FromParts("package", this.PackageName, null);
-                            i.SetData(uri);
-                            context.StartActivity(i);
-                        });
-                        AlertDialog createDialogStorage = dialogStorage.Create();
-                        createDialogStorage.Show();
-
+                        ShowDialog(messStorage);
                     }
                 }
             }
