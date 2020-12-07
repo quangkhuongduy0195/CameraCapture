@@ -1,6 +1,12 @@
 ﻿using System;
 using System.IO;
 using Android.Content;
+using Android.Content.PM;
+using Android.Graphics;
+using Android.Hardware.Camera2;
+using Android.Media;
+using Android.Provider;
+using Android.Util;
 using CameraCapture.Droid.Renderers.Camera;
 using CameraCapture.Renderers.Camera;
 using Xamarin.Forms;
