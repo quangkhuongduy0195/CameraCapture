@@ -63,11 +63,13 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Renderers\Camera\CameraViewRendererAndroid.cs" />
-    <Compile Include="Renderers\Camera\CameraPreview.cs" />
+    <Compile Include="Renderers\Camera\CameraCaptureListener.cs" />
+    <Compile Include="Renderers\Camera\CameraCaptureStateListener.cs" />
+    <Compile Include="Renderers\Camera\CameraCaptureStillPictureSessionCallback.cs" />
+    <Compile Include="Renderers\Camera\CameraDroid.cs" />
     <Compile Include="Renderers\Camera\CameraStateListener.cs" />
-    <Compile Include="Renderers\Camera\CaptureSessionListener.cs" />
-    <Compile Include="Renderers\Camera\AutoFitTextureView.cs" />
+    <Compile Include="Renderers\Camera\CameraViewRendererAndroid.cs" />
+    <Compile Include="Renderers\Camera\ImageAvailableListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -91,11 +93,25 @@
     <AndroidResource Include="Resources\mipmap-xxhdpi\launcher_foreground.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\icon.png" />
     <AndroidResource Include="Resources\mipmap-xxxhdpi\launcher_foreground.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_noimage.jpg">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_noimage.jpg">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
+    <AndroidResource Include="Resources\drawable\ic_noimage.jpg">
+      <SubType></SubType>
+      <Generator></Generator>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
     <Folder Include="Renderers\" />
     <Folder Include="Renderers\Camera\" />
+    <Folder Include="Resources\drawable-xxhdpi\" />
+    <Folder Include="Resources\drawable-xhdpi\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CameraCapture\CameraCapture.csproj">

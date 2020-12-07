@@ -140,4 +140,9 @@
     <Folder Include="Renderers\" />
     <Folder Include="Renderers\Camera\" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\ic_noimage.jpg" />
+    <BundleResource Include="Resources\ic_noimage%402x.jpg" />
+    <BundleResource Include="Resources\ic_noimage%403x.jpg" />
+  </ItemGroup>
 </Project>
