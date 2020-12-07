@@ -19,12 +19,23 @@
         <Grid Grid.Row="1"
               BackgroundColor="Black">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="44"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="64"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="44"/>
+                <ColumnDefinition Width="8"/>
             </Grid.ColumnDefinitions>
+            <Image x:Name="imgPreview"
+                   Margin="0, 16"
+                   Source="ic_noimage"
+                   Grid.Column="1"
+                   VerticalOptions="FillAndExpand"
+                   HorizontalOptions="FillAndExpand"
+                   Aspect="AspectFill"/>
             <Button Margin="0, 16, 0, 16"
-                    Grid.Column="1"
+                    Grid.Column="3"
                     BackgroundColor="Red"
                     HorizontalOptions="Fill"
                     BorderColor="White"
@@ -33,28 +44,6 @@
                     HeightRequest="64"
                     CornerRadius="32"
                     Clicked="Button_Clicked"/>
-        </Grid>
-        <Grid Grid.Row="0"
-              BackgroundColor="White"
-              Grid.RowSpan="2"
-              IsVisible="false"
-              HorizontalOptions="FillAndExpand"
-              VerticalOptions="FillAndExpand"
-              x:Name="gridPreview">
-            <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="96"/>
-            </Grid.RowDefinitions>
-            <Image x:Name="imgPreview"
-                   VerticalOptions="FillAndExpand"
-                   HorizontalOptions="FillAndExpand"
-                   Aspect="AspectFill"/>
-            <Button Text="Hide preview"
-                    Grid.Row="1"
-                    TextColor="Red"
-                    FontSize="Header"
-                    x:Name="btnhidePreview"
-                    Clicked="btnhidePreview_Clicked"/>
         </Grid>
     </Grid>
 

@@ -25,7 +25,7 @@ namespace CameraCapture.Renderers.Camera
         public Action _captureAction;
         public void Capture()
         {
-            _captureAction.Invoke();
+            _captureAction?.Invoke();
         }
 
         public event EventHandler<ImageSource> FinishProcessingPhoto;
