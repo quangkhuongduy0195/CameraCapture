@@ -9,6 +9,7 @@ using Android.Provider;
 using Android.Util;
 using CameraCapture.Droid.Renderers.Camera;
 using CameraCapture.Renderers.Camera;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 
@@ -26,22 +27,32 @@ namespace CameraCapture.Droid.Renderers.Camera
             _context = context;
         }
 
-        protected override void OnElementChanged(ElementChangedEventArgs<CameraView> e)
+        protected async override void OnElementChanged(ElementChangedEventArgs<CameraView> e)
         {
             base.OnElementChanged(e);
-            _camera = new CameraDroid(Context);
-
-            SetNativeControl(_camera);
-
-            if (e.NewElement != null && _camera != null)
+            var permissionCamera = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            switch (permissionCamera)
             {
-                //e.NewElement.CameraClick = new Command(() => TakePicture());
-                _currentElement = e.NewElement;
-                _camera.SetCameraOption(_currentElement.CameraOption);
-                _camera.Photo += OnPhoto;
+                case PermissionStatus.Unknown:
+                case PermissionStatus.Denied:
+                case PermissionStatus.Disabled:
+                    break;
+                case PermissionStatus.Granted:
+                    _camera = new CameraDroid(Context);
+                    SetNativeControl(_camera);
 
-                _currentElement._captureAction = TakePicture;
-            }
+                    if (e.NewElement != null && _camera != null)
+                    {
+                        //e.NewElement.CameraClick = new Command(() => TakePicture());
+                        _currentElement = e.NewElement;
+                        _camera.SetCameraOption(_currentElement.CameraOption);
+                        _camera.Photo += OnPhoto;
+                        _currentElement._captureAction = TakePicture;
+                    }
+                    break;
+                case PermissionStatus.Restricted:
+                    break;
+            } 
         }
 
         public void TakePicture()
