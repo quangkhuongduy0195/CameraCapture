@@ -8,7 +8,8 @@
              x:Class="CameraCapture.MainPage">
 
     <Grid HorizontalOptions="FillAndExpand"
-          VerticalOptions="FillAndExpand">
+          VerticalOptions="FillAndExpand"
+          RowSpacing="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="96"/>
