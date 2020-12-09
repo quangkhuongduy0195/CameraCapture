@@ -61,11 +61,18 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void OnPhoto(object sender, byte[] imgSource)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
+            Device.BeginInvokeOnMainThread(() => {
+
                 var stream = new MemoryStream(imgSource);
                 var imageSource = ImageSource.FromStream(() => stream);
                 _currentElement.HandleDidFinishProcessingPhoto(imageSource);
+
+
+                //var stream = new MemoryStream();
+                //imgSource.Compress(Bitmap.CompressFormat.Png, 100, stream);
+                //imgSource.Recycle();
+                //var imageSource = ImageSource.FromStream(() => stream);
+                //_currentElement.HandleDidFinishProcessingPhoto(imageSource);
             });
         }
 

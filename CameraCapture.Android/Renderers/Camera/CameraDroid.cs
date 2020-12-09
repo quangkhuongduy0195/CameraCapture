@@ -185,7 +185,11 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             _imageReader = ImageReader.NewInstance(_idealPhotoSize.Width, _idealPhotoSize.Height, ImageFormatType.Jpeg, 1);
 
-            var readerListener = new ImageAvailableListener();
+            var windowManager = _context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
+            int rotation = (int)windowManager.DefaultDisplay.Rotation;
+            int orientation = GetOrientation(rotation);
+
+            var readerListener = new ImageAvailableListener(orientation);
 
             readerListener.Photo += (sender, buffer) =>
             {
@@ -234,18 +238,17 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             if (_captureBuilder == null)
                 _captureBuilder = CameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
+            _captureBuilder.AddTarget(_imageReader.Surface);
+            _captureBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
+            SetAutoFlash(_captureBuilder);
 
             var windowManager = _context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
             int rotation = (int)windowManager.DefaultDisplay.Rotation;
             int orientation = GetOrientation(rotation);
             _captureBuilder.Set(CaptureRequest.JpegOrientation, orientation);
 
-            _captureBuilder.AddTarget(_imageReader.Surface);
-
-            _captureBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
-            SetAutoFlash(_captureBuilder);
-
             _previewSession.StopRepeating();
+            _previewSession.AbortCaptures();
             _previewSession.Capture(_captureBuilder.Build(),
                 new CameraCaptureStillPictureSessionCallback
                 {
@@ -254,6 +257,14 @@ namespace CameraCapture.Droid.Renderers.Camera
                         UnlockFocus();
                     }
                 }, null);
+            // Play shutter sound to alert user that image was captured
+            var am = (AudioManager)_context.GetSystemService(Context.AudioService);
+            if (am != null && am.RingerMode == RingerMode.Normal)
+            {
+                var cameraSound = new MediaActionSound();
+                cameraSound.Load(MediaActionSoundType.ShutterClick);
+                cameraSound.Play(MediaActionSoundType.ShutterClick);
+            }
         }
 
         public void StartPreview()

@@ -51,6 +51,7 @@ namespace CameraCapture.iOS.Renderers.Camera
                     SettupCaptureSession();
                     break;
                 case AVAuthorizationStatus.NotDetermined:
+                    SettupCaptureSession();
                     break;
                 case AVAuthorizationStatus.Denied:
                     break;
