@@ -18,6 +18,8 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.ComponentModel;
+using Image = Xamarin.Forms.Image;
+using Android.Widget;
 
 [assembly: ExportRenderer(typeof(CameraView), typeof(CameraViewRendererAndroid))]
 [assembly: Dependency(typeof(CameraViewRendererAndroid))]
@@ -61,12 +63,33 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void OnPhoto(object sender, byte[] imgSource)
         {
+            SaveImageFromByte(imgSource);
             Device.BeginInvokeOnMainThread(() =>
             {
                 var stream = new MemoryStream(imgSource);
                 var imageSource = ImageSource.FromStream(() => stream);
                 _currentElement.HandleDidFinishProcessingPhoto(imageSource);
             });
+        }
+
+        Context CurrentContext => CrossCurrentActivity.Current.Activity;
+
+        public void SaveImageFromByte(byte[] imageByte)
+        {
+            try
+            {
+                string fileName = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD") + ".png";
+                Java.IO.File storagePath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures);
+                string path = System.IO.Path.Combine(storagePath.ToString(), fileName);
+                System.IO.File.WriteAllBytes(path, imageByte);
+                var mediaScanIntent = new Intent(Intent.ActionMediaScannerScanFile);
+                mediaScanIntent.SetData(Android.Net.Uri.FromFile(new Java.IO.File(path)));
+                CurrentContext.SendBroadcast(mediaScanIntent);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -124,8 +147,8 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private async Task CheckStogarePermission()
         {
-            var rationale = ActivityCompat.ShouldShowRequestPermissionRationale(CrossCurrentActivity.Current.Activity, Manifest.Permission.ReadExternalStorage);
-            var status = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+            var rationale = ActivityCompat.ShouldShowRequestPermissionRationale(CrossCurrentActivity.Current.Activity, Manifest.Permission.WriteExternalStorage);
+            var status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
             await CreateOrGetStorageAsync();
             if (rationale == true)
                 SetfirsttimeStorage();
@@ -157,7 +180,7 @@ namespace CameraCapture.Droid.Renderers.Camera
         }
         private async Task RequestStogarePermission()
         {
-            await Permissions.RequestAsync<Permissions.StorageRead>();
+            await Permissions.RequestAsync<Permissions.StorageWrite>();
             await CheckStogarePermission();
         }
 

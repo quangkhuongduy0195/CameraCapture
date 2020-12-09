@@ -199,7 +199,7 @@ namespace CameraCapture.Droid.Renderers.Camera
             _previewSize = GetOptimalSize(map.GetOutputSizes(Class.FromType(typeof(SurfaceTexture))), width, height);
         }
 
-        int GetOrientation(int rotation) => (_orientations.Get(rotation) + sensorOrientation + 270) % 360;
+        int GetOrientation(int rotation) => (_orientations.Get(rotation)) % 360;
 
         private bool HasFLash(CameraCharacteristics characteristics)
         {
