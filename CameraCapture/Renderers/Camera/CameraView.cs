@@ -1,4 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
+using CameraCapture.ApiDefinitions.Camera;
+using CameraCapture.Models;
+using Refit;
 using Xamarin.Forms;
 
 namespace CameraCapture.Renderers.Camera
@@ -29,9 +35,51 @@ namespace CameraCapture.Renderers.Camera
         }
 
         public event EventHandler<ImageSource> FinishProcessingPhoto;
-        public void HandleDidFinishProcessingPhoto(ImageSource image)
+        public void HandleDidFinishProcessingPhoto(ImageSource image ,byte[] imageByte, string fileId)
         {
+            ImageByte = imageByte;
+            FileId = fileId;
             FinishProcessingPhoto?.Invoke(this, image);
+        }
+
+        bool saveImageServer;
+        byte[] ImageByte { get; set; }
+        string FileId { get; set; }
+        private ImageServerModel _imageServerModel;
+        IImageApi _imageApi;
+        public async void HandleDidSavePhotoServer()
+        {
+            if (ImageByte == null) return;
+            string toBase64String = Convert.ToBase64String(ImageByte);
+            var request = new ImageSaveRequest
+            {
+                FileId = FileId,
+                FileName = FileId + ".png",
+                Base64File = toBase64String
+            };
+            var apiResponse = RestService.For<IImageApi>("https://filesave.herokuapp.com");
+            var response = await apiResponse.SaveImage(request);
+            if(response.Success)
+            {
+                saveImageServer = true;
+                await App.Current.MainPage.DisplayAlert("", "Saved image to server is successful!", "OK");
+            }
+        }
+
+       
+        public async Task<ImageGetResponse> GetImageServerAsync()
+        {
+            if(saveImageServer)
+            {
+                var request = new ImageGetRequest
+                {
+                    FileId = FileId
+                };
+                var apiResponse = RestService.For<IImageApi>("https://filesave.herokuapp.com");
+                var response = await apiResponse.GetImage(request);
+                return response;
+            }
+            return null;
         }
     }
 }

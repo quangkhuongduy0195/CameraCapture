@@ -125,10 +125,10 @@ namespace CameraCapture.iOS.Renderers.Camera
                 var previewImage = new UIImage(imageData);
                 previewImage.SaveToPhotosAlbum((img, err) =>
                 {
-                    if (err == null)
-                        App.Current.MainPage.DisplayAlert("", "Saved image to photos", "OK");
-                    else
-                        App.Current.MainPage.DisplayAlert("", "Save image to photos Fail", "OK");
+                    //if (err == null)
+                    //    App.Current.MainPage.DisplayAlert("", "Saved image to photos", "OK");
+                    //else
+                    //    App.Current.MainPage.DisplayAlert("", "Save image to photos Fail", "OK");
                 });
                 delege?.ImageTake(previewImage);
             }

@@ -63,22 +63,26 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void OnPhoto(object sender, byte[] imgSource)
         {
+            ImageByte = imgSource;
+            fileId = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
+            fileName = fileId + ".png";
             SaveImageFromByte(imgSource);
             Device.BeginInvokeOnMainThread(() =>
             {
                 var stream = new MemoryStream(imgSource);
                 var imageSource = ImageSource.FromStream(() => stream);
-                _currentElement.HandleDidFinishProcessingPhoto(imageSource);
+                _currentElement.HandleDidFinishProcessingPhoto(imageSource, imgSource, fileId);
             });
         }
 
         Context CurrentContext => CrossCurrentActivity.Current.Activity;
-
+        string fileId;
+        string fileName;
+        byte[] ImageByte;
         public void SaveImageFromByte(byte[] imageByte)
         {
             try
             {
-                string fileName = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD") + ".png";
                 Java.IO.File storagePath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures);
                 string path = System.IO.Path.Combine(storagePath.ToString(), fileName);
                 System.IO.File.WriteAllBytes(path, imageByte);

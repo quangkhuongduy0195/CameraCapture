@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using CameraCapture.iOS.Renderers.Camera;
 using CameraCapture.Renderers.Camera;
+using Foundation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -71,8 +72,16 @@ namespace CameraCapture.iOS.Renderers.Camera
         void IUICameraPreviewDelege.ImageTake(UIImage image)
         {
             var newImage = FixOrientation(image);
+            byte[] imageByte;
+            using (NSData imageData = newImage.AsPNG())
+            {
+                Byte[] myByteArray = new Byte[imageData.Length];
+                System.Runtime.InteropServices.Marshal.Copy(imageData.Bytes, myByteArray, 0, Convert.ToInt32(imageData.Length));
+                imageByte = myByteArray;
+            }
+            string fileId = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
             var img = Xamarin.Forms.ImageSource.FromStream(() => newImage.AsPNG().AsStream());
-            Element.HandleDidFinishProcessingPhoto(img);
+            Element.HandleDidFinishProcessingPhoto(img, imageByte, fileId);
         }
 
         UIImage FixOrientation(UIImage image)
