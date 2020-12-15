@@ -71,6 +71,7 @@
     <Compile Include="Renderers\Camera\CameraViewRendereriOS.cs" />
     <Compile Include="Renderers\Camera\UICameraPreview.cs" />
     <Compile Include="Renderers\Camera\IUICameraPreviewDelege.cs" />
+    <Compile Include="Effects\TintImageEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.storyboard" />
@@ -145,10 +146,23 @@
   <ItemGroup>
     <Folder Include="Renderers\" />
     <Folder Include="Renderers\Camera\" />
+    <Folder Include="Effects\" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ic_noimage.jpg" />
     <BundleResource Include="Resources\ic_noimage%402x.jpg" />
     <BundleResource Include="Resources\ic_noimage%403x.jpg" />
+    <BundleResource Include="Resources\switchcamera.png" />
+    <BundleResource Include="Resources\switchcamera%402x.png" />
+    <BundleResource Include="Resources\switchcamera%403x.png" />
+    <BundleResource Include="Resources\flash_auto.png" />
+    <BundleResource Include="Resources\flash_auto%402x.png" />
+    <BundleResource Include="Resources\flash_auto%403x.png" />
+    <BundleResource Include="Resources\flash_off.png" />
+    <BundleResource Include="Resources\flash_off%402x.png" />
+    <BundleResource Include="Resources\flash_off%403x.png" />
+    <BundleResource Include="Resources\flash_on.png" />
+    <BundleResource Include="Resources\flash_on%402x.png" />
+    <BundleResource Include="Resources\flash_on%403x.png" />
   </ItemGroup>
 </Project>

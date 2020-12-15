@@ -23,5 +23,7 @@
     <Folder Include="Renderers\Camera\" />
     <Folder Include="ApiDefinitions\" />
     <Folder Include="Models\" />
+    <Folder Include="Effects\" />
+    <Folder Include="Effects\Camera\" />
   </ItemGroup>
 </Project>

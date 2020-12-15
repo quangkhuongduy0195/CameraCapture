@@ -5,73 +5,88 @@
              ios:Page.UseSafeArea="true"
              BackgroundColor="White"
              xmlns:renderers="clr-namespace:CameraCapture.Renderers.Camera"
+             xmlns:effects="clr-namespace:CameraCapture.Effects.Camera" 
              x:Class="CameraCapture.MainPage">
 
     <Grid HorizontalOptions="FillAndExpand"
-          VerticalOptions="FillAndExpand">
+          VerticalOptions="FillAndExpand"
+          RowSpacing="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="96"/>
         </Grid.RowDefinitions>
         <renderers:CameraView Grid.Row="0"
                               x:Name="cameraView"
                               FinishProcessingPhoto="cameraView_DidFinishProcessingPhoto" />
+        <Switch Grid.Row="0"
+                x:Name="switchAutoSave"
+                Margin = "5,5,0,0"
+                VerticalOptions="Start"
+                HorizontalOptions="Start"/>
+        <Label Grid.Row="0"
+               Text="Auto save"
+               TextColor="White"
+               x:Name="lbAutoSave"
+               Margin = "50,8,0,0"
+               VerticalOptions="Start"
+               HorizontalOptions="Start"/>
+        <Image Grid.Row="0"
+               Source="flash_auto"
+               x:Name="imageFlash"
+               Margin = "0,10,15,0"
+               VerticalOptions="Start"
+               HorizontalOptions="End"
+               HeightRequest="30"
+               WidthRequest="30">
+            <Image.Effects>
+                <effects:TintImage TintColor="White" x:Name="effectImage"/>
+            </Image.Effects>
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Tapped="TapFlash"/>
+            </Image.GestureRecognizers>
+         </Image>
         <Grid Grid.Row="1"
               BackgroundColor="Black">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="14*"/>
-                <ColumnDefinition Width="12*"/>
-                <ColumnDefinition Width="14*"/>
-                <ColumnDefinition Width="30*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="44"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="64"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="44"/>
+                <ColumnDefinition Width="8"/>
             </Grid.ColumnDefinitions>
             <Image x:Name="imgPreview"
-                   BackgroundColor="Gray"
                    Margin="0, 16"
                    Source="ic_noimage"
                    Grid.Column="1"
                    VerticalOptions="FillAndExpand"
                    HorizontalOptions="FillAndExpand"
                    Aspect="AspectFill"/>
-            <Button BackgroundColor="Transparent"
-                    TextColor="White"
-                    Grid.Column="2"
-                    Text="Save"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Start"
-                    Clicked="Button_Save"
-                    WidthRequest="40"
-                    HeightRequest="30"/>
-            <Button Margin="0, 80, 0, 80"
+            <Button Margin="0, 16, 0, 16"
                     Grid.Column="3"
                     BackgroundColor="Red"
                     HorizontalOptions="Fill"
                     BorderColor="White"
                     BorderWidth="5"
-                    WidthRequest="80"
-                    HeightRequest="80"
-                    CornerRadius="20"
+                    WidthRequest="64"
+                    HeightRequest="64"
+                    CornerRadius="32"
                     Clicked="Button_Clicked"/>
-            <Button BackgroundColor="Transparent"
-                    TextColor="White"
-                    Grid.Column="4"
-                    Text="Get"
-                    VerticalOptions="Center"
-                    HorizontalOptions="End"
-                    Clicked="Button_GetImage"
-                    WidthRequest="40"
-                    HeightRequest="30"/>
-            <Image x:Name="imgServer"
-                   BackgroundColor="Gray"
-                   Margin="0,16,0,16"
-                   Source="ic_noimage"
+            <Image x:Name="imgSwitchCamera"
+                   Margin="0, 30, 10, 30"
+                   Source="switchcamera"
                    Grid.Column="5"
+                   Opacity="0.7"
+                   WidthRequest="30"
+                   HeightRequest="20"
                    VerticalOptions="FillAndExpand"
                    HorizontalOptions="FillAndExpand"
                    Aspect="AspectFill">
-             </Image>
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapSwitchCamera"/>
+                </Image.GestureRecognizers>
+            </Image>
         </Grid>
     </Grid>
 

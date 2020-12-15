@@ -53,12 +53,19 @@ namespace CameraCapture.Droid.Renderers.Camera
                 _camera.SetCameraOption(_currentElement.CameraOption);
                 _camera.Photo += OnPhoto;
                 _currentElement._captureAction = TakePicture;
+                _currentElement._switchCameraAction = SwitchCamera;
             }
         }
 
         public void TakePicture()
         {
+            _camera.OptionFlash = _currentElement.OptionFlash; 
             _camera?.LockFocus();
+        }
+
+        public void SwitchCamera()
+        {
+            _camera?.SetSwitchCamera(_currentElement.CameraOption);
         }
 
         private void OnPhoto(object sender, byte[] imgSource)

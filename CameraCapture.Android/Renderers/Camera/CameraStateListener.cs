@@ -11,7 +11,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 		{
 			if (Camera == null) return;
 
-			Camera.CameraDevice = camera;
+			Camera._cameraDevice = camera;
 			Camera.StartPreview();
 			Camera.OpeningCamera = false;
 		}
@@ -21,7 +21,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 			if (Camera == null) return;
 
 			camera.Close();
-			Camera.CameraDevice = null;
+			Camera._cameraDevice = null;
 			Camera.OpeningCamera = false;
 		}
 
@@ -31,7 +31,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 
 			if (Camera == null) return;
 
-			Camera.CameraDevice = null;
+			Camera._cameraDevice = null;
 			Camera.OpeningCamera = false;
 		}
 	}

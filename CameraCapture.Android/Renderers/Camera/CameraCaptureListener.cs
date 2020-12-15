@@ -36,8 +36,7 @@ namespace CameraCapture.Droid.Renderers.Camera
                             owner.mState = CameraDroid.STATE_PICTURE_TAKEN;
                             owner.TakePhoto();
                         }
-                        else if ((((int)ControlAFState.FocusedLocked) == afState.IntValue()) ||
-                                   (((int)ControlAFState.NotFocusedLocked) == afState.IntValue()))
+                        else 
                         {
                             // ControlAeState can be null on some devices
                             Integer aeState = (Integer)result.Get(CaptureResult.ControlAeState);

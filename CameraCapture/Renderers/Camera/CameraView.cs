@@ -34,6 +34,12 @@ namespace CameraCapture.Renderers.Camera
             _captureAction?.Invoke();
         }
 
+        public Action _switchCameraAction;
+        public void SwitchCamera()
+        {
+            _switchCameraAction?.Invoke();
+        }
+
         public event EventHandler<ImageSource> FinishProcessingPhoto;
         public void HandleDidFinishProcessingPhoto(ImageSource image ,byte[] imageByte, string fileId)
         {
@@ -41,8 +47,8 @@ namespace CameraCapture.Renderers.Camera
             FileId = fileId;
             FinishProcessingPhoto?.Invoke(this, image);
         }
-
-        bool saveImageServer;
+        public string OptionFlash { get; set; } = "auto";
+        bool SaveImageServer;
         byte[] ImageByte { get; set; }
         string FileId { get; set; }
         private ImageServerModel _imageServerModel;
@@ -61,7 +67,7 @@ namespace CameraCapture.Renderers.Camera
             var response = await apiResponse.SaveImage(request);
             if(response.Success)
             {
-                saveImageServer = true;
+                SaveImageServer = true;
                 await App.Current.MainPage.DisplayAlert("", "Saved image to server is successful!", "OK");
             }
         }
@@ -69,7 +75,7 @@ namespace CameraCapture.Renderers.Camera
        
         public async Task<ImageGetResponse> GetImageServerAsync()
         {
-            if(saveImageServer)
+            if(SaveImageServer)
             {
                 var request = new ImageGetRequest
                 {

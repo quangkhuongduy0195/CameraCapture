@@ -51,17 +51,17 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         public bool OpeningCamera { private get; set; }
 
-        public CameraDevice CameraDevice;
+        public CameraDevice _cameraDevice;
 
-        private readonly CameraStateListener _cameraStateListener;
-        private readonly CameraCaptureListener _cameraCaptureListener;
+        private CameraStateListener _cameraStateListener;
+        private CameraCaptureListener _cameraCaptureListener;
 
         private CaptureRequest.Builder _previewBuilder;
         private CaptureRequest.Builder _captureBuilder;
         private CaptureRequest _previewRequest;
         private CameraCaptureSession _previewSession;
         private SurfaceTexture _viewSurface;
-        private readonly TextureView _cameraTexture;
+        private TextureView _cameraTexture;
         private Size _previewSize;
         private readonly Context _context;
         private CameraManager _manager;
@@ -74,14 +74,36 @@ namespace CameraCapture.Droid.Renderers.Camera
         private Handler _backgroundHandler;
 
         private ImageReader _imageReader;
-        private string _cameraId;
-
-        private LensFacing lensFacing;
+        private string _cameraId = null;
+        private LensFacing _lensFacing;
 
         public void SetCameraOption(CameraOptions cameraOptions)
         {
-            this.lensFacing = (cameraOptions == CameraOptions.Front) ? LensFacing.Front : LensFacing.Back;
+            this._lensFacing = (cameraOptions == CameraOptions.Front) ? LensFacing.Front : LensFacing.Back;
+            
         }
+
+        public void SetSwitchCamera(CameraOptions cameraOptions)
+        {
+            string[] cameraIds = _manager.GetCameraIdList();
+            SetCameraOption(cameraOptions);
+            CloseCamera();
+            InitPreview();
+        }
+
+        void CloseCamera()
+        {
+            _previewSession.Close();
+            _previewSession = null;
+            _cameraStateListener.OnClosed(_cameraDevice);
+            _cameraStateListener = null;
+            _cameraDevice?.Close();
+            _cameraDevice = null;
+            _cameraTexture = null;
+            this.RemoveView(_cameraTexture);
+            _previewBuilder = null;
+        }
+
 
         public CameraDroid(Context context) : base(context)
         {
@@ -90,21 +112,24 @@ namespace CameraCapture.Droid.Renderers.Camera
             var inflater = LayoutInflater.FromContext(context);
 
             if (inflater == null) return;
-            //var view = inflater.Inflate(Resource.Layout.CameraLayout, this);
 
-            //_cameraTexture = view.FindViewById<TextureView>(Resource.Id.cameraTexture);
-            _cameraTexture = new TextureView(context);
+            InitPreview();
+
+            _orientations.Append((int)SurfaceOrientation.Rotation0, 90);
+            _orientations.Append((int)SurfaceOrientation.Rotation90, 0);
+            _orientations.Append((int)SurfaceOrientation.Rotation180, 270);
+            _orientations.Append((int)SurfaceOrientation.Rotation270, 180);
+        }
+
+        void InitPreview()
+        {
+            _cameraTexture = new TextureView(_context);
 
             _cameraTexture.SurfaceTextureListener = this;
 
             _cameraStateListener = new CameraStateListener { Camera = this };
 
             _cameraCaptureListener = new CameraCaptureListener(this);
-
-            _orientations.Append((int)SurfaceOrientation.Rotation0, 90);
-            _orientations.Append((int)SurfaceOrientation.Rotation90, 0);
-            _orientations.Append((int)SurfaceOrientation.Rotation180, 270);
-            _orientations.Append((int)SurfaceOrientation.Rotation270, 180);
 
             AddView(_cameraTexture);
         }
@@ -118,8 +143,12 @@ namespace CameraCapture.Droid.Renderers.Camera
             _cameraTexture.Layout(0, 0, right - left, bottom - top);
         }
 
+        int _width = 0;
+        int _height = 0;
         public void OnSurfaceTextureAvailable(SurfaceTexture surface, int width, int height)
         {
+            _width = width;
+            _height = height;
             _viewSurface = surface;
 
             StartBackgroundThread();
@@ -147,10 +176,11 @@ namespace CameraCapture.Droid.Renderers.Camera
         private void SetUpCameraOutputs(int width, int height)
         {
             _manager = (CameraManager)_context.GetSystemService(Context.CameraService);
-
             string[] cameraIds = _manager.GetCameraIdList();
-
-            _cameraId = cameraIds[0];
+            if (_cameraId == null)
+            {
+                _cameraId = cameraIds[0];
+            }
 
             for (int i = 0; i < cameraIds.Length; i++)
             {
@@ -158,7 +188,7 @@ namespace CameraCapture.Droid.Renderers.Camera
                 sensorOrientation = (int)chararc.Get(CameraCharacteristics.SensorOrientation);
 
                 var facing = (Integer)chararc.Get(CameraCharacteristics.LensFacing);
-                if (facing != null && facing == (Integer.ValueOf((int)LensFacing.Back)))
+                if (facing != null && facing == (Integer.ValueOf((int)_lensFacing)))
                 {
                     _cameraId = cameraIds[i];
 
@@ -224,16 +254,15 @@ namespace CameraCapture.Droid.Renderers.Camera
             OpeningCamera = true;
 
             SetUpCameraOutputs(width, height);
-
             _manager.OpenCamera(_cameraId, _cameraStateListener, null);
         }
 
         public void TakePhoto()
         {
-            if (_context == null || CameraDevice == null) return;
+            if (_context == null || _cameraDevice == null) return;
 
             if (_captureBuilder == null)
-                _captureBuilder = CameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
+                _captureBuilder = _cameraDevice.CreateCaptureRequest(CameraTemplate.StillCapture);
 
             var windowManager = _context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
             int rotation = (int)windowManager.DefaultDisplay.Rotation;
@@ -244,7 +273,6 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             _captureBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
             SetAutoFlash(_captureBuilder);
-
             _previewSession.StopRepeating();
             _previewSession.Capture(_captureBuilder.Build(),
                 new CameraCaptureStillPictureSessionCallback
@@ -255,10 +283,11 @@ namespace CameraCapture.Droid.Renderers.Camera
                     }
                 }, null);
         }
+        
 
         public void StartPreview()
         {
-            if (CameraDevice == null || !_cameraTexture.IsAvailable || _previewSize == null) return;
+            if (_cameraDevice == null || !_cameraTexture.IsAvailable || _previewSize == null) return;
 
             var texture = _cameraTexture.SurfaceTexture;
 
@@ -266,14 +295,14 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             var surface = new Surface(texture);
 
-            _previewBuilder = CameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
+            _previewBuilder = _cameraDevice.CreateCaptureRequest(CameraTemplate.Preview);
             _previewBuilder.AddTarget(surface);
 
             List<Surface> surfaces = new List<Surface>();
             surfaces.Add(surface);
             surfaces.Add(_imageReader.Surface);
 
-            CameraDevice.CreateCaptureSession(surfaces,
+            _cameraDevice.CreateCaptureSession(surfaces,
                 new CameraCaptureStateListener
                 {
                     OnConfigureFailedAction = session =>
@@ -290,7 +319,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void UpdatePreview()
         {
-            if (CameraDevice == null || _previewSession == null) return;
+            if (_cameraDevice == null || _previewSession == null) return;
 
             // Reset the auto-focus trigger
             _previewBuilder.Set(CaptureRequest.ControlAfMode, (int)ControlAFMode.ContinuousPicture);
@@ -335,12 +364,28 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             return optimalSize;
         }
-
+        public string OptionFlash;
         public void SetAutoFlash(CaptureRequest.Builder requestBuilder)
         {
             if (_flashSupported)
             {
-                requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
+                //requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
+                //requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
+                switch (OptionFlash)
+                {
+                    case "on":
+                        requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
+                        break;
+                    case "off":
+                        requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
+                        break;
+                    case "auto":
+                        requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
+                        break;
+                    default:
+                        break;
+                }
+                //requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
             }
         }
 
