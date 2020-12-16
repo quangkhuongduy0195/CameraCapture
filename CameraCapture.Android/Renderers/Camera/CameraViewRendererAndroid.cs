@@ -20,6 +20,8 @@ using Plugin.CurrentActivity;
 using System.ComponentModel;
 using Image = Xamarin.Forms.Image;
 using Android.Widget;
+using Android.Views;
+using Java.IO;
 
 [assembly: ExportRenderer(typeof(CameraView), typeof(CameraViewRendererAndroid))]
 [assembly: Dependency(typeof(CameraViewRendererAndroid))]
@@ -59,7 +61,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         public void TakePicture()
         {
-            _camera.OptionFlash = _currentElement.OptionFlash; 
+            _camera.OptionFlash = _currentElement.OptionFlash;
             _camera?.LockFocus();
         }
 
@@ -70,16 +72,39 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void OnPhoto(object sender, byte[] imgSource)
         {
-            ImageByte = imgSource;
             fileId = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
             fileName = fileId + ".png";
-            SaveImageFromByte(imgSource);
-            Device.BeginInvokeOnMainThread(() =>
+            //SaveImageFromByte(imgSource);
+            Device.BeginInvokeOnMainThread(async () =>
             {
                 var stream = new MemoryStream(imgSource);
                 var imageSource = ImageSource.FromStream(() => stream);
+                imageSource = await RotateImageToPortrait(imageSource);
+                
                 _currentElement.HandleDidFinishProcessingPhoto(imageSource, imgSource, fileId);
             });
+        }
+
+        private async Task<ImageSource> RotateImageToPortrait(ImageSource imgSource)
+        {
+            var imagesourceHandler = new StreamImagesourceHandler();
+            var photoTask = imagesourceHandler.LoadImageAsync(imgSource, _context);
+
+            var photo = await photoTask;
+
+            var matrix = new Matrix();
+            
+            matrix.PreRotate(_camera.Orientation);
+            photo = Bitmap.CreateBitmap(photo, 0, 0, photo.Width, photo.Height, matrix, false);
+            matrix.Dispose();
+
+            var stream = new MemoryStream();
+            photo.Compress(Bitmap.CompressFormat.Jpeg, 50, stream);
+            stream.Seek(0L, SeekOrigin.Begin);
+            byte[] bitmapData = stream.ToArray(); ;
+            SaveImageFromByte(bitmapData);
+            ImageByte = bitmapData;
+            return ImageSource.FromStream(() => stream);
         }
 
         Context CurrentContext => CrossCurrentActivity.Current.Activity;
