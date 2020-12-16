@@ -60,7 +60,6 @@ namespace CameraCapture.Droid.Renderers.Camera
         private CaptureRequest.Builder _captureBuilder;
         private CaptureRequest _previewRequest;
         private CameraCaptureSession _previewSession;
-        private CameraCaptureSession _previewSessionInit;
         private SurfaceTexture _viewSurface;
         private TextureView _cameraTexture;
         private Size _previewSize;
@@ -252,8 +251,6 @@ namespace CameraCapture.Droid.Renderers.Camera
             _previewSize = GetOptimalSize(map.GetOutputSizes(Class.FromType(typeof(SurfaceTexture))), width, height);
         }
 
-        int GetOrientation(int rotation) => (_orientations.Get(rotation)) % 360;
-
         private bool HasFLash(CameraCharacteristics characteristics)
         {
             var available = (Java.Lang.Boolean)characteristics.Get(CameraCharacteristics.FlashInfoAvailable);
@@ -305,7 +302,6 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             var windowManager = _context.GetSystemService(Context.WindowService).JavaCast<IWindowManager>();
             int rotation = (int)windowManager.DefaultDisplay.Rotation;
-            //int orientation = GetOrientation(rotation);
             _captureBuilder.Set(CaptureRequest.ControlMode, new Integer((int)ControlMode.Auto));
             var charActer = _manager.GetCameraCharacteristics(_cameraId);
             Orientation = GetJpegOrientation(charActer, rotation);
