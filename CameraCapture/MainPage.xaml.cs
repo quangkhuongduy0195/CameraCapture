@@ -20,7 +20,7 @@ namespace CameraCapture
         On, Off, Auto
     }
 
-    public partial class MainPage : ContentPage, IAppStateAware
+    public partial class MainPage : ContentPage
     {
         IImageApi _imageApi;
         public MainPage()
@@ -32,7 +32,26 @@ namespace CameraCapture
         {
             cameraView.Capture();
             if(switchAutoSave.IsToggled)
+            {
                 Button_Save();
+                LoadingProgressBar();
+            }
+        }
+
+        async void LoadingProgressBar()
+        {
+            progressBar.Progress = 0;
+            do
+            {
+                if (progressBar.Progress < 0.9)
+                {
+                    progressBar.Progress = progressBar.Progress + 0.15;
+                    await Task.Delay(1000);
+                }
+            } while (!cameraView.SaveImageServer);
+            progressBar.Progress = 1;
+            await Task.Delay(1000);
+            progressBar.Progress = 0;
         }
 
         //async void Button_GetImage(System.Object sender, System.EventArgs e)

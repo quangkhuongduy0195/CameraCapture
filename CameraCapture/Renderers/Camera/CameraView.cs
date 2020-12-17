@@ -69,7 +69,7 @@ namespace CameraCapture.Renderers.Camera
 
 
 
-        bool SaveImageServer;
+        public bool SaveImageServer;
         byte[] ImageByte { get; set; }
         string FileId { get; set; }
         private ImageServerModel _imageServerModel;
@@ -89,7 +89,7 @@ namespace CameraCapture.Renderers.Camera
             if(response.Success)
             {
                 SaveImageServer = true;
-                await App.Current.MainPage.DisplayAlert("", "Saved image to server is successful!", "OK");
+                //await App.Current.MainPage.DisplayAlert("", "Saved image to server is successful!", "OK");
             }
         }
 
