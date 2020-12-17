@@ -412,15 +412,15 @@ namespace CameraCapture.Droid.Renderers.Camera
                 //requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
                 switch (OptionFlash)
                 {
-                    case "on":
+                    case "On":
                         requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAlwaysFlash);
                         requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Single);
                         break;
-                    case "off":
+                    case "Off":
                         requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
                         requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
                         break;
-                    case "auto":
+                    case "Auto":
                     default:
                         requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
                         break;

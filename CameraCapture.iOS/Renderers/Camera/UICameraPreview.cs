@@ -15,10 +15,11 @@ namespace CameraCapture.iOS.Renderers.Camera
     {
         AVCaptureVideoPreviewLayer _cameraLayer;
         CameraOptions cameraOptions;
-        AVCapturePhotoOutput _photoOutput = new AVCapturePhotoOutput();
+        AVCapturePhotoOutput _photoOutput;
         public IUICameraPreviewDelege delege;
         public AVCaptureSession _captureSession { get; private set; }
-
+        public AVCaptureDevice _currentCaptureDevice { get; set; }
+        AVCapturePhotoSettings setFlash { get; set; }
         public UICameraPreview(CameraOptions options)
         {
             cameraOptions = options;
@@ -28,8 +29,8 @@ namespace CameraCapture.iOS.Renderers.Camera
         public override void Draw(CGRect rect)
         {
             base.Draw(rect);
-            if(_cameraLayer != null)
-            _cameraLayer.Frame = rect;
+            if (_cameraLayer != null)
+                _cameraLayer.Frame = rect;
         }
 
         public void ChangeCameraOption(CameraOptions options)
@@ -37,8 +38,33 @@ namespace CameraCapture.iOS.Renderers.Camera
             cameraOptions = options;
             Initialize();
         }
+        AVCaptureFlashMode FlashMode;
+        public void ChangeFlashOption(FlashOptions options)
+        {
+           
+            AVCaptureDevice backCamera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
+            backCamera.LockForConfiguration(out var err);
 
-        void Initialize()
+            switch (options)
+            {
+                case FlashOptions.On:
+                    FlashMode = AVCaptureFlashMode.On;
+                    backCamera.UnlockForConfiguration();
+                    break;
+                case FlashOptions.Off:
+                    FlashMode = AVCaptureFlashMode.Off;
+                    backCamera.UnlockForConfiguration();
+                    break;
+                case FlashOptions.Auto:
+                    backCamera.TorchMode = AVCaptureTorchMode.Auto;
+                    backCamera.FlashMode = AVCaptureFlashMode.Auto;
+                    FlashMode = AVCaptureFlashMode.Auto;
+                    backCamera.UnlockForConfiguration();
+                    break;
+            }
+        }
+
+        public void Initialize()
         {
             OpenCamera();
         }
@@ -61,11 +87,34 @@ namespace CameraCapture.iOS.Renderers.Camera
             }
         }
 
-        void SettupCaptureSession()
+        AVCaptureDevice getFrontCamera()
         {
-            _captureSession = new AVCaptureSession();
+            var videoDevices = AVCaptureDevice.DevicesWithMediaType(AVMediaType.Video);
+            foreach (var dv in videoDevices)
+            {
+                AVCaptureDevice device = dv as AVCaptureDevice;
+                if (device.Position == AVCaptureDevicePosition.Front)
+                {
+                    return device;
+                }
+            }
+            return null;
+        }
+
+        AVCaptureDevice getBackCamera()
+        {
             var cameraPosition = (cameraOptions == CameraOptions.Front) ? AVCaptureDevicePosition.Front : AVCaptureDevicePosition.Back;
             var captureDevice = AVCaptureDevice.GetDefaultDevice(AVCaptureDeviceType.BuiltInWideAngleCamera, AVMediaTypes.Video, cameraPosition);
+            return captureDevice;
+        }
+
+        void SettupCaptureSession()
+        {
+            _photoOutput = new AVCapturePhotoOutput();
+            _captureSession = new AVCaptureSession();
+
+            var captureDevice = (cameraOptions == CameraOptions.Front) ? getFrontCamera() : getBackCamera();
+
             if (captureDevice != null)
             {
                 var input = new AVCaptureDeviceInput(captureDevice, out var error);
@@ -93,8 +142,8 @@ namespace CameraCapture.iOS.Renderers.Camera
                     {
                         if (captureDevice.TorchMode == AVCaptureTorchMode.Off)
                         {
-                            captureDevice.TorchMode = AVCaptureTorchMode.On;
                             captureDevice.FlashMode = AVCaptureFlashMode.On;
+                            captureDevice.TorchMode = AVCaptureTorchMode.On;
                         }
                         captureDevice.SetTorchModeLevel(1.0f, out var _);
                         captureDevice.UnlockForConfiguration();
@@ -104,12 +153,24 @@ namespace CameraCapture.iOS.Renderers.Camera
             }
         }
 
+        AVCapturePhotoSettings GetSetting(AVCaptureDevice camera, AVCaptureFlashMode flashMode)
+        {
+            var settings = AVCapturePhotoSettings.Create();
+            if(camera.HasFlash)
+            {
+                settings.FlashMode = flashMode;
+            }
+            return settings;
+        }
+
         public void HandleAction()
         {
             var photoSettings = AVCapturePhotoSettings.Create();
             var photoPreviewType = photoSettings.AvailablePreviewPhotoPixelFormatTypes.First();
-            if(photoPreviewType != null)
+            if (photoPreviewType != null)
             {
+                AVCaptureDevice backCamera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
+                photoSettings = GetSetting(backCamera, FlashMode);
                 photoSettings.PreviewPhotoFormat = new NSDictionary<NSString, NSObject>(CVPixelBuffer.PixelFormatTypeKey, photoPreviewType);
                 _photoOutput.CapturePhoto(photoSettings, this);
             }
@@ -120,7 +181,7 @@ namespace CameraCapture.iOS.Renderers.Camera
         public void DidFinishProcessingPhoto(AVCapturePhotoOutput output, AVCapturePhoto photo, NSError error)
         {
             var imageData = photo.FileDataRepresentation;
-            if(imageData != null)
+            if (imageData != null)
             {
                 var previewImage = new UIImage(imageData);
                 previewImage.SaveToPhotosAlbum((img, err) =>

@@ -15,6 +15,13 @@ namespace CameraCapture.Renderers.Camera
         Front
     }
 
+    public enum FlashOptions
+    {
+        On,
+        Off,
+        Auto
+    }
+
     public class CameraView : View
     {
         public static readonly BindableProperty CameraOptionProperty = BindableProperty.Create(propertyName: nameof(CameraOption),
@@ -48,6 +55,20 @@ namespace CameraCapture.Renderers.Camera
             FinishProcessingPhoto?.Invoke(this, image);
         }
         public string OptionFlash { get; set; } = "auto";
+
+        public static readonly BindableProperty FlashOptionProperty = BindableProperty.Create(propertyName: nameof(FlashOption),
+                                                                                         returnType: typeof(FlashOptions),
+                                                                                         declaringType: typeof(CameraView),
+                                                                                         defaultValue: FlashOptions.Off);
+
+        public FlashOptions FlashOption
+        {
+            get { return (FlashOptions)GetValue(FlashOptionProperty); }
+            set { SetValue(FlashOptionProperty, value); }
+        }
+
+
+
         bool SaveImageServer;
         byte[] ImageByte { get; set; }
         string FileId { get; set; }

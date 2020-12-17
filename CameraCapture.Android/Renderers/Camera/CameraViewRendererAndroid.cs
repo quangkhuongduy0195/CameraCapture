@@ -72,7 +72,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         private void OnPhoto(object sender, byte[] imgSource)
         {
-            fileId = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
+            fileId = "img" + DateTime.Now.ToString("yyyyMMddThhmmssTZD");
             fileName = fileId + ".png";
             //SaveImageFromByte(imgSource);
             Device.BeginInvokeOnMainThread(async () =>

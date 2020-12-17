@@ -9,6 +9,7 @@ using CameraCapture.ApiDefinitions.Camera;
 using CameraCapture.Models;
 using CameraCapture.Renderers.Camera;
 using Refit;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace CameraCapture
@@ -19,7 +20,7 @@ namespace CameraCapture
         On, Off, Auto
     }
 
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage, IAppStateAware
     {
         IImageApi _imageApi;
         public MainPage()
@@ -63,24 +64,24 @@ namespace CameraCapture
         }
 
         //TapFlash
-        Flash flash = Flash.Auto;
+        Flash flash = Flash.Off;
         void TapFlash(System.Object sender, System.EventArgs e)
         {
             switch (flash)
             {
                 case Flash.On:
                     imageFlash.Source = "flash_off";
-                    cameraView.OptionFlash = "off";
+                    cameraView.FlashOption = FlashOptions.Off;
                     flash = Flash.Off;
                     break;
                 case Flash.Off:
                     imageFlash.Source = "flash_auto";
-                    cameraView.OptionFlash = "auto";
+                    cameraView.FlashOption = FlashOptions.Auto;
                     flash = Flash.Auto;
                     break;
                 case Flash.Auto:
                     imageFlash.Source = "flash_on";
-                    cameraView.OptionFlash = "on";
+                    cameraView.FlashOption = FlashOptions.On;
                     flash = Flash.On;
                     break;
             }

@@ -47,6 +47,9 @@ namespace CameraCapture.iOS.Renderers.Camera
             base.OnElementPropertyChanged(sender, e);
             if (e.PropertyName == CameraView.CameraOptionProperty.PropertyName)
                 _uiCameraPreview?.ChangeCameraOption(Element.CameraOption);
+            if (e.PropertyName == CameraView.FlashOptionProperty.PropertyName)
+                _uiCameraPreview?.ChangeFlashOption(Element.FlashOption);
+
         }
 
         private void OnCameraPreviewTapped(object sender, EventArgs e)
