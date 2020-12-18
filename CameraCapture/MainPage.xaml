@@ -21,6 +21,8 @@
         <Switch Grid.Row="0"
                 x:Name="switchAutoSave"
                 Margin = "5,5,0,0"
+                OnColor="LightSkyBlue"
+                ThumbColor="White"
                 VerticalOptions="Start"
                 HorizontalOptions="Start"/>
         <Label Grid.Row="0"
@@ -84,7 +86,7 @@
                     BorderWidth="5"
                     WidthRequest="40"
                     HeightRequest="40"
-                    CornerRadius="20"
+                    CornerRadius="32"
                     Clicked="Button_Clicked"/>
             <Image x:Name="imgSwitchCamera"
                    Margin="0, 30, 10, 30"
