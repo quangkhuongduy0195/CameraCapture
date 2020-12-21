@@ -12,5 +12,8 @@ namespace CameraCapture.ApiDefinitions.Camera
 
         [Post("/api/getFile")]
         Task<ImageGetResponse> GetImage([Body]  ImageGetRequest request);
+
+        [Post("/api/getAllFile")]
+        Task<ImageGetAllResponse> GetAllImage([Body] ImageGetAllRequest request);
     }
 }

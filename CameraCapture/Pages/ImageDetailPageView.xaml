@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CameraCapture.Pages.ImageDetailPageView" xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             NavigationPage.HasNavigationBar="false"
+             BackgroundColor="White">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="90*"/>
+        </Grid.RowDefinitions>
+        
+        <Label Text="{Binding FileName}"
+               FontSize="10"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+        <Image x:Name="btnBack"
+               Source="goBack"
+               Margin="10,-7,0,0"
+               HeightRequest="30"
+               WidthRequest="25"
+               VerticalOptions="Center"
+               HorizontalOptions="Start">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Tapped="GoBackEventAsync"/>
+            </Image.GestureRecognizers>
+        </Image>
+        <BoxView BackgroundColor="LightGray"
+                 VerticalOptions="End"
+                 HeightRequest="1"/>
+        <Image x:Name="imageDetail"
+               Grid.Row="1"
+               Source="{Binding FullLinkFile}"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"/>
+        </Grid>
+</ContentPage>

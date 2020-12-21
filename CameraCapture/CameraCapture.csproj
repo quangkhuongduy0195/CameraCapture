@@ -17,6 +17,9 @@
     <PackageReference Include="Refit" Version="5.2.4" />
     <PackageReference Include="Prism.Forms" Version="8.0.0.1909" />
     <PackageReference Include="Prism.Core" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Unity" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Unity.Forms" Version="8.0.0.1909" />
+    <PackageReference Include="Prism.Plugin.Popups" Version="7.2.0.1046" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Renderers\" />
@@ -25,5 +28,6 @@
     <Folder Include="Models\" />
     <Folder Include="Effects\" />
     <Folder Include="Effects\Camera\" />
+    <Folder Include="Pages\" />
   </ItemGroup>
 </Project>

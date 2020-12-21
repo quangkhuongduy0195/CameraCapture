@@ -53,25 +53,26 @@ namespace CameraCapture.Renderers.Camera
             ImageByte = imageByte;
             FileId = fileId;
             FinishProcessingPhoto?.Invoke(this, image);
+            if(AutoSave)
+            {
+                HandleDidSavePhotoServer();
+            }
         }
-        public string OptionFlash { get; set; } = "auto";
 
         public static readonly BindableProperty FlashOptionProperty = BindableProperty.Create(propertyName: nameof(FlashOption),
                                                                                          returnType: typeof(FlashOptions),
                                                                                          declaringType: typeof(CameraView),
                                                                                          defaultValue: FlashOptions.Off);
-
         public FlashOptions FlashOption
         {
             get { return (FlashOptions)GetValue(FlashOptionProperty); }
             set { SetValue(FlashOptionProperty, value); }
         }
 
-
-
+        public bool AutoSave;
         public bool SaveImageServer;
         byte[] ImageByte { get; set; }
-        string FileId { get; set; }
+        public string FileId { get; set; }
         private ImageServerModel _imageServerModel;
         IImageApi _imageApi;
         public async void HandleDidSavePhotoServer()
@@ -84,13 +85,15 @@ namespace CameraCapture.Renderers.Camera
                 FileName = FileId + ".png",
                 Base64File = toBase64String
             };
+
             var apiResponse = RestService.For<IImageApi>("https://filesave.herokuapp.com");
             var response = await apiResponse.SaveImage(request);
-            if(response.Success)
+            if (response.Success)
             {
                 SaveImageServer = true;
                 //await App.Current.MainPage.DisplayAlert("", "Saved image to server is successful!", "OK");
             }
+
         }
 
        

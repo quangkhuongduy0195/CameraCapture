@@ -82,7 +82,7 @@ namespace CameraCapture.iOS.Renderers.Camera
                 System.Runtime.InteropServices.Marshal.Copy(imageData.Bytes, myByteArray, 0, Convert.ToInt32(imageData.Length));
                 imageByte = myByteArray;
             }
-            string fileId = "img" + DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
+            string fileId = "img" + DateTime.Now.ToString("yyyyMMddThhmmssTZD");
             var img = Xamarin.Forms.ImageSource.FromStream(() => newImage.AsPNG().AsStream());
             Element.HandleDidFinishProcessingPhoto(img, imageByte, fileId);
         }

@@ -9,8 +9,6 @@ using Android.Util;
 using Android.Views;
 using Android.Widget;
 using CameraCapture.Renderers.Camera;
-//using Camera2Forms.CustomViews;
-//using Camera2Forms.Droid;
 using Java.Lang;
 using System;
 using System.Collections.Generic;
@@ -403,24 +401,22 @@ namespace CameraCapture.Droid.Renderers.Camera
 
             return optimalSize;
         }
-        public string OptionFlash;
+        public FlashOptions OptionFlash;
         public void SetAutoFlash(CaptureRequest.Builder requestBuilder)
         {
             if (_flashSupported)
             {
-                //requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
-                //requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
                 switch (OptionFlash)
                 {
-                    case "On":
+                    case FlashOptions.On:
                         requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAlwaysFlash);
                         requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Single);
                         break;
-                    case "Off":
-                        requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.Off);
+                    case FlashOptions.Off:
+                        requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.On);
                         requestBuilder.Set(CaptureRequest.FlashMode, (int)FlashMode.Off);
                         break;
-                    case "Auto":
+                    case FlashOptions.Auto:
                     default:
                         requestBuilder.Set(CaptureRequest.ControlAeMode, (int)ControlAEMode.OnAutoFlash);
                         break;

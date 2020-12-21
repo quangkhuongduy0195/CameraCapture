@@ -61,7 +61,7 @@ namespace CameraCapture.Droid.Renderers.Camera
 
         public void TakePicture()
         {
-            _camera.OptionFlash = _currentElement.OptionFlash;
+            _camera.OptionFlash = _currentElement.FlashOption;
             _camera?.LockFocus();
         }
 
@@ -74,14 +74,13 @@ namespace CameraCapture.Droid.Renderers.Camera
         {
             fileId = "img" + DateTime.Now.ToString("yyyyMMddThhmmssTZD");
             fileName = fileId + ".png";
-            //SaveImageFromByte(imgSource);
+
             Device.BeginInvokeOnMainThread(async () =>
             {
                 var stream = new MemoryStream(imgSource);
                 var imageSource = ImageSource.FromStream(() => stream);
                 imageSource = await RotateImageToPortrait(imageSource);
-                
-                _currentElement.HandleDidFinishProcessingPhoto(imageSource, imgSource, fileId);
+                _currentElement.HandleDidFinishProcessingPhoto(imageSource, ImageByte, fileId);
             });
         }
 
@@ -103,7 +102,6 @@ namespace CameraCapture.Droid.Renderers.Camera
             stream.Seek(0L, SeekOrigin.Begin);
             byte[] bitmapData = stream.ToArray(); ;
             SaveImageFromByte(bitmapData);
-            ImageByte = bitmapData;
             return ImageSource.FromStream(() => stream);
         }
 
@@ -115,6 +113,7 @@ namespace CameraCapture.Droid.Renderers.Camera
         {
             try
             {
+                ImageByte = imageByte;
                 Java.IO.File storagePath = Android.OS.Environment.GetExternalStoragePublicDirectory(Android.OS.Environment.DirectoryPictures);
                 string path = System.IO.Path.Combine(storagePath.ToString(), fileName);
                 System.IO.File.WriteAllBytes(path, imageByte);

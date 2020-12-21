@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CameraCapture.Pages.ImageGalleryPageView"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             ios:Page.UseSafeArea="true"
+             NavigationPage.HasNavigationBar="false"
+             BackgroundColor="White">
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="90*"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="btnBack"
+               Source="goBack"
+               Margin="10,-7,0,0"
+               HeightRequest="30"
+               WidthRequest="25"
+               VerticalOptions="Center"
+               HorizontalOptions="Start">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Tapped="GoBackEventAsync"/>
+            </Image.GestureRecognizers>
+        </Image>
+        <Label Text="Album"
+               FontSize="20"
+               TextColor="Black"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+        <BoxView BackgroundColor="Gray"
+                 VerticalOptions="End"
+                 HeightRequest="1"/>
+        <ScrollView Grid.Row="1">
+            <Grid x:Name="copyrightGrid"/>
+           
+        </ScrollView>
+    </Grid>
+</ContentPage>

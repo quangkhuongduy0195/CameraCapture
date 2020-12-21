@@ -164,5 +164,8 @@
     <BundleResource Include="Resources\flash_on.png" />
     <BundleResource Include="Resources\flash_on%402x.png" />
     <BundleResource Include="Resources\flash_on%403x.png" />
+    <BundleResource Include="Resources\goBack.png" />
+    <BundleResource Include="Resources\goBack%402x.png" />
+    <BundleResource Include="Resources\goBack%403x.png" />
   </ItemGroup>
 </Project>
